@@ -17,7 +17,6 @@ export const HomePage = () => {
       <Layout.Header />
       <Layout.Content>
         <div className="flex flex-wrap gap-x-0 gap-y-2 sm:grid sm:grid-cols-3 md:grid md:grid-cols-4 lg:grid lg:grid-cols-5 xl:grid xl:grid-cols-6">
-          {/* <CustomPizzaCard /> */}
           {isPizzaListPending &&
             Array.from(Array(5), (_, index) => (
               <Skeleton

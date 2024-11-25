@@ -44,7 +44,7 @@ export const SuccessView = ({ setClose }: SuccessViewProps) => {
         <Button className="absolute right-2 top-2" onClick={() => setClose(false)} variant="ghost">
           <IconX />
         </Button>
-        <div className="flex h-full w-full flex-col justify-between gap-4 p-5">
+        <div className="flex h-full w-full flex-col justify-between gap-4 p-4">
           <div className="flex max-w-xl flex-col gap-4 text-left">
             <div className="flex w-full flex-col flex-nowrap items-center justify-center text-center">
               <AcceptIcon />

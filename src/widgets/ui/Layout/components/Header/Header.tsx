@@ -14,7 +14,7 @@ export const Header = () => {
 
   return (
     <header className="h-22 fixed left-0 right-0 top-0 z-10 flex flex-col items-center justify-between bg-primary-color">
-      <div className="m-auto flex w-full max-w-[400px] flex-wrap items-center justify-between p-2 sm:w-[550px] sm:max-w-none md:w-[750px] md:max-w-none lg:w-[950px] lg:max-w-none xl:w-[1200px] xl:max-w-none">
+      <div className="m-auto flex w-full max-w-[400px] flex-wrap items-center justify-between px-4 py-2 sm:w-[550px] sm:max-w-none md:w-[750px] md:max-w-none lg:w-[950px] lg:max-w-none xl:w-[1200px] xl:max-w-none">
         <div className="flex items-center gap-5">
           <Link
             className="flex cursor-pointer font-inter text-2xl text-white hover:text-gray-200"

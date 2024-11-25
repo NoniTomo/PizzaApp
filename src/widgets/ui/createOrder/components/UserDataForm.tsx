@@ -46,7 +46,7 @@ export const UserDataForm = ({ setClose }: UserDataFormProps) => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col justify-between gap-4 p-2">
+    <div className="flex h-full w-full flex-col justify-between gap-4 p-4">
       <div className="flex items-center gap-5">
         <Button
           onClick={() => setClose(false)}

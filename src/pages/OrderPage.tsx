@@ -25,7 +25,7 @@ export const OrderPage = () => {
   const handleCloseModal = (value: boolean) => {
     if (value === false) {
       setOpenModal(value)
-      navigate('/cart')
+      navigate('/orders')
     }
   }
 

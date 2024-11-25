@@ -65,7 +65,7 @@ export const PaymentCardForm = () => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col gap-4 p-2">
+    <div className="flex h-full w-full flex-col gap-4 p-4">
       <div className="flex items-center gap-5">
         <Button
           onClick={() => stageContext.back()}

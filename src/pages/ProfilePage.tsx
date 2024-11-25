@@ -41,7 +41,7 @@ export const ProfilePage = () => {
     <Layout>
       <Layout.Header />
       <Layout.Content>
-        <Tabs className="w-full" defaultValue="profile">
+        <Tabs className="box-border w-full p-4" defaultValue="profile">
           <TabsList className="h-max gap-4 p-0">
             <TabsTrigger
               className="rounded-xl border-2 p-3 hover:border-secondary-color hover:text-secondary-color data-[state=active]:border-primary-color data-[state=active]:text-primary-color"
