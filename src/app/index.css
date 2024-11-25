@@ -1,9 +1,21 @@
+@import url('./reset.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family: Inter, sans-serif;
+}
+
 @layer base {
+
   :root {
+    --gradient-color: linear-gradient(#fd5c2e, #fe7122);
+    --primary-color: #f6752c;
+    --primary-color-2: #e26d2a;
+    --secondary-color: #ffaa2c;
+    --secondary-color-2: #ee9919;
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -30,6 +42,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -57,11 +70,21 @@
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
+
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+
+  .scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
