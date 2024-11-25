@@ -1,4 +1,4 @@
-# WebJournal
+# PizzaApp
 
 This is a client application for an online pizzeria.
 
