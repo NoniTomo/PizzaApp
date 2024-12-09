@@ -9,7 +9,19 @@ export const getOrderListThunk = createAppAsyncThunk(
     thunkApi.extra.api.getOrderList(params).then((res) => ({
       entities: res.data.items.reduce(
         (entities, order) => {
-          entities[order.id] = order
+          entities[order.id] = {
+            address: order.address,
+            amount: order.amount,
+            id: order.id,
+            statusId: order.status_fk,
+            pizzas: order.pizzas.map((pizza) => ({
+              doughId: pizza.dough_fk,
+              pizzaId: pizza.pizza_fk,
+              sizeId: pizza.size_fk,
+              toppingIds: pizza.topping_ids.map((toppingId) => toppingId.id),
+              orderPizzaId: pizza.id
+            }))
+          }
           return entities
         },
         {} as Record<number, Order>

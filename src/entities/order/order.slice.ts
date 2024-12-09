@@ -27,6 +27,7 @@ export const orderSlice = createAppSlice({
     selectIsOrderIds: (state) => state.ids,
     selectIsGetOrderListPending: (state) => state.getOrderListStatus === 'pending',
     selectIsGetOrderListIdle: (state) => state.getOrderListStatus === 'idle',
+    selectIsCreateOrderSuccess: (state) => state.createOrderStatus === 'success',
     selectIsCreateOrderPending: (state) => state.createOrderStatus === 'pending',
     selectIsCreateOrderIdle: (state) => state.createOrderStatus === 'idle'
   },

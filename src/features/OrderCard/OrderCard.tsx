@@ -32,9 +32,7 @@ export const OrderCard = ({ orderId, ...props }: PizzaCardProps) => {
         </div>
         <div className="flex flex-col gap-2">
           <h6 className="text-xs text-gray-400">Адрес доставки</h6>
-          <p className="text-base">
-            {order.address.city}, {order.address.street}, {order.address.house}
-          </p>
+          <p className="text-base">{order.address}</p>
         </div>
         <div className="flex flex-col gap-2">
           <h6 className="text-xs text-gray-400">Состав заказа</h6>

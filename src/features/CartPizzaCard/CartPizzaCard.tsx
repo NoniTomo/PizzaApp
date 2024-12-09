@@ -25,7 +25,6 @@ export const CartPizzaCard = ({ pizzaId, ...props }: CartPizzaCardProps) => {
   const pizza = useAppSelector((state) =>
     pizzaSlice.selectors.selectPizza(state, pizzaConfig?.pizzaId ?? 0)
   ) as Pizza
-
   const currentPizza = useAppSelector(pizzaSlice.selectors.selectCurrentPizza) as Pizza
   const currentPizzaUserConfig = useAppSelector(pizzaSlice.selectors.selectCurrentPizzaUserConfig) as {
     sizeId: number
@@ -65,7 +64,12 @@ export const CartPizzaCard = ({ pizzaId, ...props }: CartPizzaCardProps) => {
   }
 
   React.useEffect(() => {
-    dispatch(getPizzaInfoThunk({ params: { pizzaId: Number(pizzaConfig?.pizzaId) }, config: {} }))
+    dispatch(
+      getPizzaInfoThunk({
+        params: { pizzaId: Number(pizzaConfig?.pizzaId) },
+        config: { headers: { Authorization: localStorage.getItem('token') } }
+      })
+    )
   }, [dispatch, pizzaConfig?.pizzaId])
 
   if (isLoading)

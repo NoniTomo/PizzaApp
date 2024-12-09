@@ -4,8 +4,7 @@ interface Pizza {
   price: number
   image: string
   description: string
-  pizzaTypeIds: number[]
-  toppingIds: number[]
+  pizzaType: string
 }
 
 interface User {
@@ -17,7 +16,7 @@ interface User {
 interface Order {
   id: number
   amount: number
-  address: Address
+  address: string
   statusId: number
   pizzas: {
     orderPizzaId: number

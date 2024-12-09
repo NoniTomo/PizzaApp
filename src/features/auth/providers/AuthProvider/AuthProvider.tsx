@@ -1,3 +1,4 @@
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { userSlice } from '@/entities/user/user.slice'
@@ -9,9 +10,15 @@ export type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const isError = useAppSelector(userSlice.selectors.selectIsGetUserAuthError)
+
+  const isPending = useAppSelector(userSlice.selectors.selectIsGetUserAuthPending)
   const navigation = useNavigate()
 
-  if (isError) navigation('auth')
+  React.useEffect(() => {
+    if (isError) navigation('/auth')
+  }, [isError])
+
+  if (isPending) return <div>Loading...</div>
 
   return <>{children}</>
 }

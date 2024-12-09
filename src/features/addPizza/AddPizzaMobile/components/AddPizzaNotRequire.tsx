@@ -56,7 +56,7 @@ export const AddPizzaNotRequire = ({ setResult, type }: AddPizzaNotRequireProps)
           </div>
         </div>
       </section>
-      <section className="-mt-12 flex flex-col gap-4 p-4">
+      <section className="scrollbar -mt-12 flex h-96 flex-col gap-4 overflow-scroll p-4 pb-48">
         <div className="flex flex-col gap-2">
           <h5 className="text-2xl font-bold">{pizza?.name}</h5>
           <p className="text-base">{pizza?.description}</p>

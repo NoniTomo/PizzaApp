@@ -1,5 +1,9 @@
+import React from 'react'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { IconLogout } from '@tabler/icons-react'
 
+import { getUserLogoutThunk } from '@/entities/user/model/getUserLogoutThunkThunk'
 import { patchUserThunk } from '@/entities/user/model/patchUserThunk'
 import { userSlice } from '@/entities/user/user.slice'
 import { CartButton } from '@/features/CartButton/CartButton'
@@ -12,29 +16,52 @@ import { Layout } from '@/widgets'
 export const ProfilePage = () => {
   const userData = useAppSelector(userSlice.selectors.selectUser)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
+  const isSuccess = useAppSelector(userSlice.selectors.selectIsGetUserLogoutSuccess)
+
+  React.useEffect(() => {
+    if (isSuccess && !localStorage.getItem('token')) navigate('/auth')
+  }, [isSuccess])
+
+  const logout = () => {
+    dispatch(
+      getUserLogoutThunk({ config: { headers: { Authorization: localStorage.getItem('token') } } })
+    )
+  }
 
   const profileForm = useForm({
     mode: 'onChange',
     defaultValues: {
       phoneNumber: userData?.phoneNumber ?? '',
-      fullName: userData?.fullName ?? '',
-      oldPassword: '',
-      newPassword: ''
+      fullName: userData?.fullName ?? ''
     }
   })
 
   const passwordForm = useForm({
     mode: 'onChange',
     defaultValues: {
-      phoneNumber: userData?.phoneNumber ?? '',
-      fullName: userData?.fullName ?? '',
       oldPassword: '',
       newPassword: ''
     }
   })
 
-  const onSubmit = (data: UserUpdateRequestDto) => {
-    dispatch(patchUserThunk({ params: { fullName: data.fullName, phoneNumber: data.phoneNumber } }))
+  const onSubmitProfile = (data: { fullName: string; phoneNumber: string }) => {
+    dispatch(
+      patchUserThunk({
+        params: { ...data },
+        config: { headers: { Authorization: localStorage.getItem('token') } }
+      })
+    )
+  }
+
+  const onSubmitPassword = (data: { oldPassword: string; newPassword: string }) => {
+    dispatch(
+      patchUserThunk({
+        params: { password: { ...data } },
+        config: { headers: { Authorization: localStorage.getItem('token') } }
+      })
+    )
   }
 
   return (
@@ -60,14 +87,18 @@ export const ProfilePage = () => {
             <form
               className="flex max-w-xl flex-col gap-4 text-left"
               id="userDataFormID"
-              onSubmit={profileForm.handleSubmit(onSubmit)}
+              onSubmit={profileForm.handleSubmit(onSubmitProfile)}
             >
               <TextField
                 id="fullName"
                 register={profileForm.register('fullName', {
-                  required: 'Это поле обязательное',
-                  minLength: { value: 1, message: 'Минимум один символ' },
-                  maxLength: { value: 60, message: 'Максимум один символ' }
+                  required: 'Введите имя!',
+                  minLength: 2,
+                  maxLength: 100,
+                  pattern: {
+                    value: /^[а-яА-Яa-zA-ZёЁ\s]*$/,
+                    message: 'Недопустимое значение!'
+                  }
                 })}
                 placeholder="Иванов Иван Иванович"
                 error={profileForm.formState.errors.fullName?.message}
@@ -78,8 +109,14 @@ export const ProfilePage = () => {
               <TextField
                 id="phoneNumber"
                 type="tel"
-                register={profileForm.register('phoneNumber')}
                 placeholder="89999999999"
+                register={profileForm.register('phoneNumber', {
+                  required: 'Введите номер!',
+                  pattern: {
+                    value: /\+[0-9]/,
+                    message: 'Недопустимое значение номера!'
+                  }
+                })}
                 error={profileForm.formState.errors.phoneNumber?.message}
                 label="Номер телефона"
                 isDisabled={false}
@@ -98,24 +135,32 @@ export const ProfilePage = () => {
             <form
               className="flex max-w-xl flex-col gap-4 text-left"
               id="userDataFormID"
-              onSubmit={passwordForm.handleSubmit(onSubmit)}
+              onSubmit={passwordForm.handleSubmit(onSubmitPassword)}
             >
               <TextField
                 id="oldPassword"
                 type="password"
-                register={passwordForm.register('oldPassword')}
+                register={passwordForm.register('oldPassword', {
+                  required: 'Введите пароль!',
+                  minLength: 8,
+                  maxLength: 50
+                })}
                 placeholder=""
-                error={passwordForm.formState.errors.phoneNumber?.message}
+                error={passwordForm.formState.errors.oldPassword?.message}
                 label="Старый пароль"
                 isDisabled={false}
                 isRequired={false}
               />
               <TextField
-                id="oldPassword"
+                id="newPassword"
                 type="password"
-                register={passwordForm.register('oldPassword')}
+                register={passwordForm.register('newPassword', {
+                  required: 'Введите пароль!',
+                  minLength: 8,
+                  maxLength: 50
+                })}
                 placeholder=""
-                error={passwordForm.formState.errors.phoneNumber?.message}
+                error={passwordForm.formState.errors.newPassword?.message}
                 label="Новый пароль"
                 isDisabled={false}
                 isRequired={false}
@@ -130,6 +175,13 @@ export const ProfilePage = () => {
             </form>
           </TabsContent>
         </Tabs>
+        <Button
+          className="m-4 h-10 w-full max-w-xl rounded-xl bg-red-700 hover:bg-red-800"
+          onClick={() => logout()}
+        >
+          <IconLogout size="30" className="text-gray-200" />
+          <p className="text-gray-200">Выйти</p>
+        </Button>
       </Layout.Content>
       <Layout.Footer />
       <CartButton />

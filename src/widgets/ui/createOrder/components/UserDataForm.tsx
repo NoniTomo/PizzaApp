@@ -37,7 +37,13 @@ export const UserDataForm = ({ setClose }: UserDataFormProps) => {
   })
 
   const onSubmit = (data: Address & Omit<User, 'id'>) => {
-    dispatch(patchUserThunk({ params: { fullName: data.fullName, phoneNumber: data.phoneNumber } }))
+    if (userData?.fullName !== data.fullName || userData?.phoneNumber !== data.phoneNumber)
+      dispatch(
+        patchUserThunk({
+          params: { fullName: data.fullName, phoneNumber: data.phoneNumber },
+          config: { headers: { Authorization: localStorage.getItem('token') } }
+        })
+      )
     dispatch({
       type: 'user/setAddress',
       payload: { city: data.city, street: data.street, house: data.house }

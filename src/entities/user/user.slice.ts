@@ -1,9 +1,13 @@
+import { toast } from 'react-toastify'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 import { createAppSlice } from '@/shared/lib/store'
 
 import { getUserAuthThunk } from './model/getUserAuthThunk'
+import { getUserLogoutThunk } from './model/getUserLogoutThunkThunk'
 import { patchUserThunk } from './model/patchUserThunk'
+import { postUserLoginThunk } from './model/postUserLoginThunk'
+import { postUserRegistrationThunk } from './model/postUserRegistrationThunk'
 
 export interface UserState {
   user: {
@@ -86,7 +90,19 @@ export const userSlice = createAppSlice({
       state.appData.toppingType?.find((toppingType) => toppingType.id === toppingTypeId),
     selectIsGetUserAuthPending: (state) => state.authUserStatus === 'pending',
     selectIsGetUserAuthIdle: (state) => state.authUserStatus === 'idle',
-    selectIsGetUserAuthError: (state) => state.authUserStatus === 'failed'
+    selectIsGetUserAuthError: (state) => state.authUserStatus === 'failed',
+    selectIsPostUserLoginPending: (state) => state.loginUserStatus === 'pending',
+    selectIsPostUserLoginIdle: (state) => state.loginUserStatus === 'idle',
+    selectIsPostUserLoginError: (state) => state.loginUserStatus === 'failed',
+    selectIsPostUserLoginSuccess: (state) => state.loginUserStatus === 'success',
+    selectIsPostUserRegistrationPending: (state) => state.registrationUserStatus === 'pending',
+    selectIsPostUserRegistrationIdle: (state) => state.registrationUserStatus === 'idle',
+    selectIsPostUserRegistrationError: (state) => state.registrationUserStatus === 'failed',
+    selectIsPostUserRegistrationSuccess: (state) => state.registrationUserStatus === 'success',
+    selectIsGetUserLogoutSuccess: (state) => state.logoutUserStatus === 'success',
+    selectIsGetUserLogoutPending: (state) => state.logoutUserStatus === 'pending',
+    selectIsGetUserLogoutIdle: (state) => state.logoutUserStatus === 'idle',
+    selectIsGetUserLogoutError: (state) => state.logoutUserStatus === 'failed'
   },
   reducers: {
     setAddress: (state, action: PayloadAction<Address>) => ({
@@ -99,22 +115,57 @@ export const userSlice = createAppSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getUserAuthThunk.fulfilled, (state, action: PayloadAction<UserAuthResponseDto>) => {
-      const toppingByType = action.payload.appData.topping.reduce(
+      const toppingByType = action.payload.topping.reduce(
         (entities, topping) => {
-          entities[topping.toppingTypeId] = [...(entities[topping.toppingTypeId] ?? []), topping]
+          entities[topping.topping_type_fk] = [
+            ...(entities[topping.topping_type_fk] ?? []),
+            {
+              id: topping.id,
+              name: topping.name,
+              toppingTypeId: topping.topping_type_fk
+            }
+          ]
           return entities
         },
         {} as Record<number, Topping[]>
       )
 
+      const payload = {
+        topping: action.payload.topping.map((topping) => ({
+          id: topping.id,
+          name: topping.name,
+          toppingTypeId: topping.topping_type_fk
+        })),
+        status: action.payload.status,
+        dough: action.payload.dough,
+        pizzaType: action.payload.pizza_type,
+        toppingType: action.payload.topping_type,
+        size: action.payload.size.map((item) => ({
+          id: item.id,
+          length: item.length,
+          changePricePizza: item.change_price_pizza,
+          changePriceTopping: item.change_price_topping
+        }))
+      }
+
+      const user = {
+        id: action.payload.user.id,
+        fullName: action.payload.user.full_name,
+        phoneNumber: action.payload.user.phone_number
+      }
+
       return {
         ...state,
-        user: { ...action.payload.user },
-        appData: { ...action.payload.appData, toppingByType },
+        user: user,
+        appData: {
+          ...payload,
+          toppingByType
+        },
         authUserStatus: 'success'
       }
     })
     builder.addCase(getUserAuthThunk.rejected, (state) => {
+      localStorage.removeItem('token')
       state.authUserStatus = 'failed'
     })
     builder.addCase(getUserAuthThunk.pending, (state) => {
@@ -130,6 +181,100 @@ export const userSlice = createAppSlice({
     })
     builder.addCase(patchUserThunk.pending, (state) => {
       state.patchUserStatus = 'pending'
+    })
+
+    builder.addCase(postUserLoginThunk.fulfilled, (state, action: PayloadAction<LoginResponseDto>) => {
+      localStorage.setItem('token', action.payload.token)
+
+      const toppingByType = action.payload.topping.reduce(
+        (entities, topping) => {
+          entities[topping.topping_type_fk] = [
+            ...(entities[topping.topping_type_fk] ?? []),
+            {
+              id: topping.id,
+              name: topping.name,
+              toppingTypeId: topping.topping_type_fk
+            }
+          ]
+          return entities
+        },
+        {} as Record<number, Topping[]>
+      )
+
+      const payload = {
+        topping: action.payload.topping.map((topping) => ({
+          id: topping.id,
+          name: topping.name,
+          toppingTypeId: topping.topping_type_fk
+        })),
+        status: action.payload.status,
+        dough: action.payload.dough,
+        pizzaType: action.payload.pizza_type,
+        toppingType: action.payload.topping_type,
+        size: action.payload.size.map((item) => ({
+          id: item.id,
+          length: item.length,
+          changePricePizza: item.change_price_pizza,
+          changePriceTopping: item.change_price_topping
+        }))
+      }
+
+      const user = {
+        id: action.payload.user.id,
+        fullName: action.payload.user.full_name,
+        phoneNumber: action.payload.user.phone_number
+      }
+
+      return {
+        ...state,
+        user: user,
+        appData: {
+          ...payload,
+          toppingByType
+        },
+        loginUserStatus: 'success'
+      }
+    })
+    builder.addCase(postUserLoginThunk.rejected, (state, action) => {
+      const payload = action.payload as { message: string }
+
+      if (payload) {
+        toast.error(payload.message) // Показываем сообщение об ошибке
+      } else {
+        toast.error('Неожиданная ошибка')
+      }
+
+      state.loginUserStatus = 'failed'
+    })
+    builder.addCase(postUserLoginThunk.pending, (state) => {
+      state.loginUserStatus = 'pending'
+    })
+    builder.addCase(postUserRegistrationThunk.fulfilled, (state) => {
+      state.registrationUserStatus = 'success'
+    })
+    builder.addCase(postUserRegistrationThunk.rejected, (state, action) => {
+      const payload = action.payload as { message: string }
+
+      if (payload) {
+        toast.error(payload.message) // Показываем сообщение об ошибке
+      } else {
+        toast.error('Неожиданная ошибка')
+      }
+
+      state.registrationUserStatus = 'failed'
+    })
+    builder.addCase(postUserRegistrationThunk.pending, (state) => {
+      state.registrationUserStatus = 'pending'
+    })
+    builder.addCase(getUserLogoutThunk.fulfilled, (state) => {
+      localStorage.removeItem('token')
+      state.logoutUserStatus = 'success'
+    })
+    builder.addCase(getUserLogoutThunk.rejected, (state) => {
+      state.logoutUserStatus = 'failed'
+    })
+    builder.addCase(getUserLogoutThunk.pending, (state) => {
+      state.logoutUserStatus = 'pending'
     })
   }
 })

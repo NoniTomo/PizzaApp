@@ -1,16 +1,38 @@
-import { Link, NavLink, useLocation } from 'react-router-dom'
-import { IconCircle, IconClockHour2, IconShoppingCart, IconUserCircle } from '@tabler/icons-react'
+import React from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import {
+  IconCircle,
+  IconClockHour2,
+  IconLogout,
+  IconShoppingCart,
+  IconUserCircle
+} from '@tabler/icons-react'
 
 import { selectCartPizzasPriceAndCount } from '@/entities/cart/selectors'
+import { getUserLogoutThunk } from '@/entities/user/model/getUserLogoutThunkThunk'
+import { userSlice } from '@/entities/user/user.slice'
 import { NavButton } from '@/features/NavButton/NavButton'
 import { PizzaTypeList } from '@/features/PizzaTypeList/PizzaTypeList'
 import { Badge } from '@/shared/components/ui/badge'
-import { useAppSelector } from '@/shared/lib'
+import { useAppDispatch, useAppSelector } from '@/shared/lib'
 
 export const Header = () => {
   const location = useLocation()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const countCart = useAppSelector(selectCartPizzasPriceAndCount).count
+  const isSuccess = useAppSelector(userSlice.selectors.selectIsGetUserLogoutSuccess)
+
+  React.useEffect(() => {
+    if (isSuccess && !localStorage.getItem('token')) navigate('/auth')
+  }, [isSuccess])
+
+  const logout = () => {
+    dispatch(
+      getUserLogoutThunk({ config: { headers: { Authorization: localStorage.getItem('token') } } })
+    )
+  }
 
   return (
     <header className="h-22 fixed left-0 right-0 top-0 z-10 flex flex-col items-center justify-between bg-primary-color">
@@ -23,9 +45,16 @@ export const Header = () => {
             Pizza
           </Link>
           <div className="hidden md:flex md:gap-4">
-            <NavButton type="row" Icon={IconCircle} text="pizza" to="/" />
-            <NavButton type="row" Icon={IconClockHour2} text="orders" to="/orders" />
-            <NavButton type="row" Icon={IconUserCircle} text="profile" to="/profile" />
+            <NavButton type="row" Icon={IconCircle} text="Пиццы" to="/" />
+            <NavButton type="row" Icon={IconClockHour2} text="Заказы" to="/orders" />
+            <NavButton type="row" Icon={IconUserCircle} text="Профиль" to="/profile" />
+            <button
+              className={`my-1 flex flex-row items-center justify-center gap-2 rounded-lg px-2 hover:bg-slate-100 hover:bg-opacity-15`}
+              onClick={() => logout()}
+            >
+              <IconLogout size="30" className="text-gray-200" />
+              <p className="text-gray-200">Выйти</p>
+            </button>
           </div>
         </div>
         <NavLink className="relative hidden md:block" to="/cart">

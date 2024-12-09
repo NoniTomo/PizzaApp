@@ -6,7 +6,10 @@ import { pizzaSlice } from '../pizza.slice'
 export const getPizzaInfoThunk = createAppAsyncThunk(
   'pizza/getPizzaInfo',
   (params: GetPizzaIdConfig & { refetch?: boolean }, thunkApi) =>
-    thunkApi.extra.api.getPizzaId(params).then((res) => res.data.item),
+    thunkApi.extra.api.getPizzaId(params).then((res) => {
+      console.log(res.data.item)
+      return res.data.item
+    }),
   {
     condition(arg, thunkApi) {
       const isIdle = pizzaSlice.selectors.selectIsGetPizzaInfoIdle(thunkApi.getState())

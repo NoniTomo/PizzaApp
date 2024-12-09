@@ -32,6 +32,7 @@ export const pizzaSlice = createAppSlice({
   initialState: initialState,
   selectors: {
     selectPizza: (state, pizzaId: number) => state.entities[pizzaId],
+    selectEntities: (state) => state.entities,
     selectCurrentPizza: (state) => state.currentPizza,
     selectCurrentPizzaUserConfig: (state) => state.currentPizzaUserConfig,
     selectIsPizzaIds: (state) => state.ids,

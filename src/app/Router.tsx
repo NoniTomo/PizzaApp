@@ -5,7 +5,9 @@ import { getOrderListThunk } from '@/entities/order/model/getOrderList'
 import { getPizzaInfoThunk } from '@/entities/pizza/model/getPizzaInfo'
 import { getPizzaListThunk } from '@/entities/pizza/model/getPizzaList'
 import { getUserAuthThunk } from '@/entities/user/model/getUserAuthThunk'
-import { AuthProvider } from '@/features/ui/AuthProvider/AuthProvider'
+import { userSlice } from '@/entities/user/user.slice'
+import { AuthProvider } from '@/features/auth'
+import { AuthPage } from '@/pages/AuthPage'
 import { CartPage } from '@/pages/CartPage'
 import { HomePage } from '@/pages/HomePage'
 import { OrderPage } from '@/pages/OrderPage'
@@ -21,10 +23,6 @@ const loadStore = () =>
   })
 
 export const router = createBrowserRouter([
-  /* {
-    path: '/auth',
-    element: <AuthPage />
-  }, */
   {
     path: '/',
     element: (
@@ -35,16 +33,37 @@ export const router = createBrowserRouter([
     loader: async () => {
       await loadStore()
 
-      store.dispatch(getUserAuthThunk({ refetch: true }))
-      store.dispatch(getPizzaListThunk({ refetch: true }))
+      const isError = userSlice.selectors.selectIsGetUserAuthError(store.getState())
+      if (!isError)
+        store.dispatch(
+          getUserAuthThunk({
+            refetch: true,
+            config: { headers: { Authorization: localStorage.getItem('token') } }
+          })
+        )
       store.dispatch({ type: 'cart/storedCart' })
 
       return null
     },
     children: [
       {
+        path: '/auth',
+        element: <AuthPage />
+      },
+      {
         path: '/',
         element: <HomePage />,
+        loader: async () => {
+          await loadStore()
+
+          store.dispatch(
+            getPizzaListThunk({
+              refetch: true,
+              config: { headers: { Authorization: localStorage.getItem('token') } }
+            })
+          )
+          return null
+        },
         children: [
           {
             path: '/pizza/:id',
@@ -53,7 +72,11 @@ export const router = createBrowserRouter([
               await loadStore()
 
               store.dispatch(
-                getPizzaInfoThunk({ refetch: true, params: { pizzaId: Number(params.id) } })
+                getPizzaInfoThunk({
+                  refetch: true,
+                  params: { pizzaId: Number(params.id) },
+                  config: { headers: { Authorization: localStorage.getItem('token') } }
+                })
               )
 
               return null
@@ -67,6 +90,16 @@ export const router = createBrowserRouter([
       },
       {
         path: '/cart',
+        loader: async () => {
+          await loadStore()
+          store.dispatch(
+            getPizzaListThunk({
+              refetch: true,
+              config: { headers: { Authorization: localStorage.getItem('token') } }
+            })
+          )
+          return null
+        },
         element: <CartPage />
       },
       {
@@ -87,7 +120,12 @@ export const router = createBrowserRouter([
         loader: async () => {
           await loadStore()
 
-          store.dispatch(getOrderListThunk({ refetch: true }))
+          store.dispatch(
+            getOrderListThunk({
+              refetch: true,
+              config: { headers: { Authorization: localStorage.getItem('token') } }
+            })
+          )
 
           return null
         }

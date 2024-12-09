@@ -1,9 +1,12 @@
+import React from 'react'
 import { useForm } from 'react-hook-form'
 import { IconChevronLeft } from '@tabler/icons-react'
 import { useHookFormMask } from 'use-mask-input'
 
 import { cartSlice } from '@/entities/cart/cart.slice'
+import { selectCartPizzasPriceAndCount } from '@/entities/cart/selectors'
 import { createOrderThunk } from '@/entities/order/model/createOrder'
+import { orderSlice } from '@/entities/order/order.slice'
 import { userSlice } from '@/entities/user/user.slice'
 import { Button } from '@/shared/components'
 import { TextField } from '@/shared/components/ui/textField'
@@ -33,6 +36,12 @@ export const PaymentCardForm = () => {
   const pizzas = useAppSelector(cartSlice.selectors.selectCartPizzas)
   const ids = useAppSelector(cartSlice.selectors.selectCartIds)
   const address = useAppSelector(userSlice.selectors.selectAddress)
+  const price = useAppSelector(selectCartPizzasPriceAndCount)
+  const isSuccess = useAppSelector(orderSlice.selectors.selectIsCreateOrderSuccess)
+
+  React.useEffect(() => {
+    if (isSuccess) stageContext.set('successView')
+  }, [isSuccess])
 
   const onSubmit = (data: PaymentCard) => {
     if (address.city && address.house && address.street && pizzas) {
@@ -55,12 +64,13 @@ export const PaymentCardForm = () => {
         createOrderThunk({
           params: {
             card: data,
-            address: address as Address,
+            amount: price.price,
+            address: `${address.city}, ${address.street}, ${address.house}`,
             pizzas: result
-          }
+          },
+          config: { headers: { Authorization: localStorage.getItem('token') } }
         })
       )
-      stageContext.set('successView')
     }
   }
 

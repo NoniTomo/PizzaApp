@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 
 import { pizzaSlice } from '@/entities/pizza/pizza.slice'
 import { CartButton } from '@/features/CartButton/CartButton'
@@ -9,7 +9,9 @@ import { useAppSelector } from '@/shared/lib'
 import { Layout } from '@/widgets'
 
 export const HomePage = () => {
+  const location = useLocation()
   const pizzaListIds = useAppSelector(pizzaSlice.selectors.selectIsPizzaIds)
+  const pizzaListEntities = useAppSelector(pizzaSlice.selectors.selectEntities)
   const isPizzaListPending = useAppSelector(pizzaSlice.selectors.selectIsGetPizzaListPending)
 
   return (
@@ -25,7 +27,11 @@ export const HomePage = () => {
               />
             ))}
           {!isPizzaListPending &&
-            pizzaListIds.map((pizzaId) => <PizzaCard key={pizzaId} pizzaId={pizzaId} />)}
+            pizzaListIds
+              .filter((pizzaId) => {
+                return pizzaListEntities[pizzaId]?.pizzaType === location.search.split('=')[1]
+              })
+              .map((pizzaId) => <PizzaCard key={pizzaId} pizzaId={pizzaId} />)}
         </div>
         <Outlet />
       </Layout.Content>
