@@ -31,7 +31,7 @@ interface OrderBackend {
     pizza_fk: number
     size_fk: number
     dough_fk: number
-    topping_ids: { id: number }[]
+    topping_ids: { topping_fk: number }[]
   }[]
 }
 

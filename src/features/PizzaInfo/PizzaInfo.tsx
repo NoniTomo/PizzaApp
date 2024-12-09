@@ -15,7 +15,7 @@ export type PizzaInfoProps = {
 const selectToppings = createSelector(
   [(_, toppingIds) => toppingIds, (state) => state],
   (toppingIds: number[], state) =>
-    toppingIds?.map((toppingId: number) => userSlice.selectors.selectTopping(state, toppingId))
+    toppingIds?.map((toppingId: number) => userSlice.selectors.selectTopping(state, Number(toppingId)))
 )
 
 export const PizzaInfo = ({
@@ -31,7 +31,7 @@ export const PizzaInfo = ({
   const dough = useAppSelector((state) => userSlice.selectors.selectDough(state, doughId))
 
   const toppings = useAppSelector((state) => selectToppings(state, toppingIds))
-
+  console.log(toppingIds)
   return (
     <p className={`text-gray-500 ${className}`} {...props}>
       <span>

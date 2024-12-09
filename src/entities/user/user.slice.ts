@@ -85,7 +85,14 @@ export const userSlice = createAppSlice({
     selectSize: (state, sizeId: number) => state.appData.size?.find((size) => size.id === sizeId),
     selectDough: (state, doughId: number) => state.appData.dough?.find((dough) => dough.id === doughId),
     selectTopping: (state, toppingId: number) =>
-      state.appData.topping?.find((topping) => topping.id === toppingId),
+      state.appData.topping?.find((topping) => {
+        //console.log(topping.id)
+        console.log(toppingId)
+        const data = topping.id === toppingId
+        //console.log(data)
+
+        return data
+      }),
     selectToppingType: (state, toppingTypeId: number) =>
       state.appData.toppingType?.find((toppingType) => toppingType.id === toppingTypeId),
     selectIsGetUserAuthPending: (state) => state.authUserStatus === 'pending',

@@ -1,3 +1,4 @@
+import React from 'react'
 import { IconX } from '@tabler/icons-react'
 
 import { pizzaSlice } from '@/entities/pizza/pizza.slice'
@@ -28,6 +29,18 @@ export const AddPizzaDesktop = ({ setResult, setClose, type }: AddPizzaDesktopPr
   const price = usePrice({ currentPizza: pizza, currentPizzaUserConfig })
   const dispatch = useAppDispatch()
 
+  React.useEffect(() => {
+    if (sizeList && doughList && (!currentPizzaUserConfig.sizeId || !currentPizzaUserConfig.doughId)) {
+      dispatch({
+        type: 'pizza/setCurrentPizzaUserConfig',
+        payload: {
+          sizeId: (sizeList && sizeList[0].id) ?? undefined,
+          doughId: (doughList && doughList[0].id) ?? undefined
+        }
+      })
+    }
+  }, [dispatch, sizeList, doughList, currentPizzaUserConfig])
+
   return (
     <div
       onClick={() => setClose(false)}
@@ -41,7 +54,10 @@ export const AddPizzaDesktop = ({ setResult, setClose, type }: AddPizzaDesktopPr
           <IconX />
         </Button>
         <div className="grid grid-cols-2">
-          <img src={pizza?.image} className="sticky top-4 flex w-full items-center justify-center p-4" />
+          <img
+            src={`${import.meta.env.VITE_CLIENT_URL}/public/pizzas/${pizza?.image}.png`}
+            className="sticky top-4 flex w-full items-center justify-center p-4"
+          />
           <div className="bg-[#F9F7F4]">
             <section className="flex flex-col gap-4 p-4">
               <div className="flex flex-col gap-2">

@@ -78,7 +78,10 @@ export const CartPizzaCard = ({ pizzaId, ...props }: CartPizzaCardProps) => {
   return (
     <Card {...props}>
       <CardContent className="flex gap-6 p-3">
-        <img className="max-h-24 max-w-24" src={pizza?.image} />
+        <img
+          className="max-h-24 max-w-24"
+          src={`${import.meta.env.VITE_CLIENT_URL}/public/pizzas/${pizza?.image}.png`}
+        />
         <div className="flex w-full flex-wrap items-center justify-between gap-2 text-xs md:text-sm">
           <h3 className="text-size w-full text-sm font-semibold md:text-base lg:w-auto lg:max-w-44">
             {pizza?.name}

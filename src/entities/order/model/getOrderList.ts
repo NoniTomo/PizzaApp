@@ -18,7 +18,7 @@ export const getOrderListThunk = createAppAsyncThunk(
               doughId: pizza.dough_fk,
               pizzaId: pizza.pizza_fk,
               sizeId: pizza.size_fk,
-              toppingIds: pizza.topping_ids.map((toppingId) => toppingId.id),
+              toppingIds: pizza.topping_ids.map((toppingId) => toppingId.topping_fk),
               orderPizzaId: pizza.id
             }))
           }

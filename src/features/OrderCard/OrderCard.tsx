@@ -18,6 +18,8 @@ export const OrderCard = ({ orderId, ...props }: PizzaCardProps) => {
 
   if (!order || !status) return null
 
+  console.log(order.pizzas)
+
   return (
     <Card className="relative z-0 mx-5 my-2 box-border min-w-64 max-w-[860px] px-6 shadow-md" {...props}>
       <CardContent className="box-border flex flex-col items-start gap-6 pt-6">

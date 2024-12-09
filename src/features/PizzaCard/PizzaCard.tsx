@@ -19,7 +19,7 @@ export const PizzaCard = ({ pizzaId, ...props }: PizzaCardProps) => {
   return (
     <Card className="relative z-0 mx-auto mb-6 w-44 pt-2 shadow-md" {...props}>
       <CardContent className="flex flex-col items-center justify-center">
-        <img src={pizza.image} />
+        <img src={`${import.meta.env.VITE_CLIENT_URL}/public/pizzas/${pizza.image}.png`} />
         {pizza.price && <p className="text-xl text-primary-color">₽ {pizza.price}</p>}
         <h3 className="text-size text-sm font-semibold">{pizza.name}</h3>
         <p className="text-center text-xs text-[#969AB0]">{pizza.description}</p>
