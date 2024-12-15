@@ -17,6 +17,8 @@ import { ProfilePage } from '@/pages/ProfilePage'
 
 import { store } from './store'
 
+//
+
 const loadStore = () =>
   new Promise((resolve) => {
     setTimeout(() => resolve(store), 0)
